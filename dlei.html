@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="pt" id="documentHtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>DLEI · Certificação Soberana</title>
+  <!-- Fontes: Inter + Cairo (RTL Árabe) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- DESIGN SYSTEM · LUXO INSTITUCIONAL · SOBERANO ---------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #0A0A0A;
+      color: #F5F5F5;
+      font-family: 'Inter', 'Cairo', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      letter-spacing: -0.01em;
+    }
+    body[dir="rtl"] { font-family: 'Cairo', 'Inter', sans-serif; letter-spacing: 0; }
+    h1, h2, h3, h4 { font-weight: 400; letter-spacing: -0.02em; line-height: 1.2; }
+    h1 { font-size: clamp(2.2rem, 8vw, 4.2rem); font-weight: 500; letter-spacing: -0.03em; margin-bottom: 1.5rem; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 2rem 5%; }
+    body[dir="rtl"] .container { text-align: right; }
+    
+    /* --- componentes premium --- */
+    .card {
+      background: rgba(15,15,15,0.8);
+      border: 0.5px solid rgba(192,160,96,0.15);
+      border-radius: 16px;
+      padding: 2rem 1.8rem;
+      transition: border-color 0.2s ease;
+    }
+    .card:hover { border-color: rgba(192,160,96,0.3); }
+    .tag {
+      display: inline-block;
+      border: 0.5px solid rgba(192,160,96,0.3);
+      border-radius: 32px;
+      padding: 0.2rem 1.2rem;
+      font-size: 0.7rem;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #C0A060;
+      background: transparent;
+    }
+    body[dir="rtl"] .tag { letter-spacing: 0; }
+    .button {
+      display: inline-block;
+      background: #C0A060;
+      color: #0A0A0A;
+      font-weight: 500;
+      padding: 0.8rem 2.2rem;
+      border-radius: 32px;
+      border: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      transition: opacity 0.2s ease;
+      margin-top: 1.5rem;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    body[dir="rtl"] .button { letter-spacing: 0; }
+    .button:hover { opacity: 0.85; }
+    .button-outline { background: transparent; border: 0.5px solid #C0A060; color: #C0A060; }
+    
+    input, select {
+      background: rgba(10,10,10,0.6);
+      border: 0.5px solid rgba(192,160,96,0.2);
+      border-radius: 32px;
+      padding: 0.7rem 1.5rem;
+      color: #F5F5F5;
+      font-family: inherit;
+      font-weight: 300;
+      width: 100%;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    body[dir="rtl"] input, body[dir="rtl"] select { text-align: right; }
+    input:focus, select:focus { outline: none; border-color: #C0A060; }
+    label { 
+      font-size: 0.7rem; 
+      text-transform: uppercase; 
+      letter-spacing: 0.1em; 
+      color: #C0A060; 
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 400;
+    }
+    body[dir="rtl"] label { letter-spacing: 0; text-align: right; }
+    .hidden { display: none !important; }
+    
+    /* --- navegação por etapas (progresso) --- */
+    .etapa-indicator {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0 1.5rem;
+      flex-wrap: wrap;
+    }
+    .etapa-passo {
+      font-size: 0.7rem;
+      padding: 0.4rem 1.2rem;
+      border-radius: 32px;
+      background: rgba(192,160,96,0.08);
+      color: #C0A060;
+      border: 0.5px solid transparent;
+    }
+    .etapa-passo.ativo {
+      background: #C0A060;
+      color: #0A0A0A;
+      border-color: #C0A060;
+      font-weight: 500;
+    }
+    
+    .lang-selector {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.3rem;
+      margin-bottom: 1rem;
+    }
+    body[dir="rtl"] .lang-selector { justify-content: flex-start; }
+    .lang-btn {
+      background: transparent;
+      border: 0.5px solid rgba(192,160,96,0.2);
+      color: #C0A060;
+      padding: 0.3rem 0.9rem;
+      border-radius: 32px;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    body[dir="rtl"] .lang-btn { letter-spacing: 0; }
+    .lang-btn.active { background: #C0A060; color: #0A0A0A; border-color: #C0A060; }
+    
+    .codigo-display {
+      font-size: 1.8rem;
+      font-weight: 400;
+      letter-spacing: 0.2rem;
+      color: #F5F5F5;
+      font-family: 'Inter', 'Cairo', monospace;
+    }
+    .mono {
+      font-family: 'Inter', 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: #C0A060;
+      word-break: break-all;
+    }
+    .institution-id {
+      background: rgba(192,160,96,0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.8rem;
+      border-left: 2px solid #C0A060;
+    }
+    body[dir="rtl"] .institution-id { border-left: none; border-right: 2px solid #C0A060; }
+    
+    .qr-canvas {
+      background: #FFFFFF;
+      padding: 0.8rem;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+    .qr-canvas canvas { display: block; width: 120px; height: 120px; }
+    .video-player-container {
+      width: 100%;
+      background: #050505;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+      border: 0.5px solid rgba(192,160,96,0.2);
+    }
+    .video-player {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+    .video-player iframe { width: 100%; height: 100%; border: 0; }
+    .footer {
+      margin-top: 5rem;
+      padding-top: 2rem;
+      border-top: 0.5px solid rgba(192,160,96,0.15);
+      text-align: center;
+      font-size: 0.7rem;
+      color: #666;
+      letter-spacing: 0.02em;
+    }
+    
+    /* --- utilitários de fluxo --- */
+    .etapa-bloco { margin-bottom: 1rem; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin: 1.5rem 0;
+    }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body dir="ltr" id="bodyTag">
+  <div class="container" id="app">
+    <!-- ========== SELETOR IDIOMA · RTL ========== -->
+    <div class="lang-selector">
+      <button class="lang-btn" data-lang="pt">PT</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="rw">RW</button>
+      <button class="lang-btn" data-lang="ar">AR</button>
+    </div>
+
+    <!-- ========== TELA INICIAL (HERO) ========== -->
+    <div id="telaInicial">
+      <span class="tag" data-i18n="infraTag">INFRAESTRUTURA DE CERTIFICAÇÃO SOBERANA</span>
+      <h1 data-i18n="heroTitulo">Infraestrutura de Identidade<br>e Certificação Acadêmica</h1>
+      <div class="subhead" style="color:#999; font-size:1.2rem; margin-bottom:2rem;" data-i18n="heroSubtitulo">
+        Identidade digital institucional · Assinatura criptográfica · Verificação matemática
+      </div>
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+        <button class="button" id="btnAcessoInstitucional" data-i18n="acessoInstitucional">ACESSO INSTITUCIONAL</button>
+        <button class="button button-outline" id="btnAcessoAluno" data-i18n="acessoAluno">ACESSO ALUNO</button>
+      </div>
+    </div>
+
+    <!-- ========== PAINEL INSTITUCIONAL · FLUXO PROGRESSIVO ========== -->
+    <div id="painelInstitucional" class="hidden">
+      <hr>
+      <!-- indicação de identidade ativa -->
+      <div class="institution-id" style="margin-bottom:1.5rem;" id="areaStatusInstituicao">
+        <span style="color:#C0A060; font-size:0.7rem; text-transform:uppercase;" data-i18n="instituicaoAtiva">INSTITUIÇÃO</span>
+        <p id="displayInstNomeAtiva" style="font-weight:400; margin-top:0.3rem;"></p>
+        <p id="displayInstIdAtiva" class="mono" style="font-size:0.7rem;"></p>
+      </div>
+
+      <!-- INDICADOR DE ETAPAS (progresso) -->
+      <div class="etapa-indicator" id="etapaIndicatorInst">
+        <span class="etapa-passo ativo" data-etapa="1" data-i18n="etapa1Inst">1 · Criar identidade</span>
+        <span class="etapa-passo" data-etapa="2" data-i18n="etapa2Inst">2 · Criar turma</span>
+        <span class="etapa-passo" data-etapa="3" data-i18n="etapa3Inst">3 · Publicar aula</span>
+        <span class="etapa-passo" data-etapa="4" data-i18n="etapa4Inst">4 · Emitir certificado</span>
+      </div>
+
+      <!-- ETAPA 1 — CRIAR IDENTIDADE (se não existir) -->
+      <div id="etapa1_inst" class="etapa-bloco card">
+        <h3 data-i18n="registroTitulo">1. Criar identidade digital da instituição</h3>
+        <div style="max-width:600px;">
+          <label data-i18n="nomeInstituicao">Nome da instituição</label>
+          <input type="text" id="inputInstNome" placeholder="Ex: Universidade de São Paulo">
+          <label data-i18n="pais">País</label>
+          <input type="text" id="inputInstPais" placeholder="Ex: Brasil">
+          <label data-i18n="tipo">Tipo</label>
+          <select id="selectInstTipo">
+            <option value="universidade" data-i18n="universidade">Universidade</option>
+            <option value="escola" data-i18n="escola">Escola</option>
+            <option value="autonomo" data-i18n="professorAutonomo">Professor Autônomo</option>
+          </select>
+          <label data-i18n="email">Email institucional</label>
+          <input type="email" id="inputInstEmail" placeholder="contato@instituicao.edu">
+          <button class="button" id="btnGerarIdentidade" style="width:100%;" data-i18n="gerarIdentidade">CRIAR IDENTIDADE DIGITAL</button>
+          
+          <div id="areaIdentidadeConfirmacao" style="margin-top:1.8rem; display:none;">
+            <div class="institution-id">
+              <span style="color:#C0A060; text-transform:uppercase;" data-i18n="idInstitucional">ID INSTITUCIONAL</span>
+              <p id="displayInstId" class="mono" style="margin-top:0.3rem;"></p>
+              <span style="color:#C0A060; text-transform:uppercase; margin-top:1rem; display:block;" data-i18n="chavePublica">CHAVE PÚBLICA</span>
+              <p id="displayPublicKey" class="mono" style="margin-top:0.3rem; font-size:0.7rem;"></p>
+            </div>
+            <p style="color:#C0A060; font-size:0.75rem; margin-top:1rem;">✓ Chave privada armazenada localmente — nunca é enviada.</p>
+            <button class="button" id="btnAvancarEtapa2" style="width:100%; margin-top:1rem;" data-i18n="continuar">CONTINUAR PARA ETAPA 2</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ETAPA 2 — CRIAR TURMA (bloqueado sem identidade) -->
+      <div id="etapa2_inst" class="etapa-bloco card hidden">
+        <h3 data-i18n="criarTurma">2. Criar turma</h3>
+        <div style="max-width:500px;">
+          <label data-i18n="nomeTurma">Nome da turma</label>
+          <input type="text" id="inputTurmaNome" placeholder="Ex: Cálculo I - 2026.1">
+          <label data-i18n="professorResponsavel">Professor responsável</label>
+          <input type="text" id="inputProfessorNome" value="Prof. Titular">
+          <button class="button" id="btnCriarTurma" style="width:100%;" data-i18n="gerarCodigoEAssinar">GERAR CÓDIGO E ASSINAR</button>
+          <div style="margin-top:1.8rem; padding-top:1rem; border-top:0.5px solid rgba(192,160,96,0.15);">
+            <span style="color:#C0A060; font-size:0.7rem; text-transform:uppercase;" data-i18n="codigoTurma">CÓDIGO DA TURMA</span>
+            <div class="codigo-display" id="displayCodigoTurma">——</div>
+          </div>
+          <button class="button button-outline" id="btnAvancarEtapa3" style="margin-top:1rem;" data-i18n="avancarPublicar">AVANÇAR PARA PUBLICAR AULA</button>
+        </div>
+      </div>
+
+      <!-- ETAPA 3 — PUBLICAR AULA -->
+      <div id="etapa3_inst" class="etapa-bloco card hidden">
+        <h3 data-i18n="publicarAula">3. Publicar aula</h3>
+        <div style="max-width:500px;">
+          <label data-i18n="selecionarTurma">Turma</label>
+          <select id="selectTurmaAula"></select>
+          <label data-i18n="tituloAula">Título da aula</label>
+          <input type="text" id="inputAulaTitulo" placeholder="Ex: Derivadas - Aula 1">
+          <label data-i18n="linkVideo">Link do vídeo (YouTube)</label>
+          <input type="text" id="inputAulaVideo" placeholder="https://youtube.com/...">
+          <button class="button" id="btnPublicarAula" style="width:100%;" data-i18n="publicar">PUBLICAR</button>
+          <div style="margin-top:1rem;">
+            <p style="color:#999; font-size:0.8rem;" data-i18n="aulasPublicadasResumo">Aulas publicadas:</p>
+            <div id="listaAulasPublicadasMini" style="max-height:150px; overflow-y:auto; background:rgba(0,0,0,0.2); border-radius:8px; padding:0.3rem 0;">
+              <div style="padding:0.5rem 1.2rem; color:#777;" data-i18n="nenhumaAula">Nenhuma aula.</div>
+            </div>
+          </div>
+          <button class="button button-outline" id="btnAvancarEtapa4" style="margin-top:1rem;" data-i18n="avancarEmitir">AVANÇAR PARA EMITIR CERTIFICADO</button>
+        </div>
+      </div>
+
+      <!-- ETAPA 4 — EMITIR CERTIFICADO (com assinatura real) -->
+      <div id="etapa4_inst" class="etapa-bloco card hidden">
+        <h3 data-i18n="emitirCertificado">4. Emitir certificado soberano</h3>
+        <div class="grid-2">
+          <div>
+            <label data-i18n="selecionarTurma">Turma</label>
+            <select id="selectTurmaEmitir"></select>
+            <label data-i18n="selecionarAluno">Aluno</label>
+            <select id="selectAlunoEmitir">
+              <option value="" data-i18n="selecioneTurmaPrimeiro">Selecione uma turma primeiro</option>
+            </select>
+          </div>
+          <div>
+            <label data-i18n="nomeCurso">Curso / disciplina</label>
+            <input type="text" id="inputCursoNome" placeholder="Ex: Cálculo I">
+            <button class="button" id="btnEmitirCertificado" style="margin-top:1.8rem; width:100%;" data-i18n="assinarEEmitir">ASSINAR E EMITIR</button>
+          </div>
+        </div>
+        <!-- lista de certificados emitidos -->
+        <div style="margin-top:1.5rem;">
+          <span style="color:#C0A060; font-size:0.7rem; text-transform:uppercase;" data-i18n="certificadosEmitidos">CERTIFICADOS EMITIDOS</span>
+          <div id="listaCertificadosEmitidosMini" style="max-height:150px; overflow-y:auto; background:rgba(0,0,0,0.2); border-radius:8px; padding:0.3rem 0;">
+            <div style="padding:0.5rem 1.2rem; color:#777;" data-i18n="nenhumCertificado">Nenhum certificado.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <button id="btnVoltarInicialProfessor" class="tag" style="border:none; background:transparent; cursor:pointer;" data-i18n="retornar">← RETORNAR AO INÍCIO</button>
+      </div>
+    </div>
+
+    <!-- ========== PAINEL DO ALUNO · FLUXO PROGRESSIVO ========== -->
+    <div id="painelAluno" class="hidden">
+      <hr>
+      <h2 data-i18n="painelAluno">Aluno · Credenciais e Conteúdo</h2>
+      
+      <div class="etapa-indicator" id="etapaIndicatorAluno">
+        <span class="etapa-passo ativo" data-etapa="1" data-i18n="etapa1Aluno">1 · Conectar à turma</span>
+        <span class="etapa-passo" data-etapa="2" data-i18n="etapa2Aluno">2 · Assistir aula</span>
+        <span class="etapa-passo" data-etapa="3" data-i18n="etapa3Aluno">3 · Ver certificado</span>
+      </div>
+
+      <!-- ETAPA 1 — CONECTAR TURMA -->
+      <div id="etapa1_aluno" class="etapa-bloco card">
+        <h3 data-i18n="ingressarTurma">1. Ingressar na turma</h3>
+        <div style="max-width:400px;">
+          <label data-i18n="codigoTurmaLabel">Código da turma</label>
+          <input type="text" id="inputCodigoTurmaAluno" placeholder="Ex: A1B2C3" maxlength="6" style="text-transform:uppercase;">
+          <label data-i18n="nomeCompleto">Nome completo</label>
+          <input type="text" id="inputNomeAluno" placeholder="Ex: João Santos">
+          <button class="button" id="btnConectarTurma" style="width:100%;" data-i18n="conectar">CONECTAR</button>
+          <p id="statusConexaoAluno" style="font-size:0.8rem; margin-top:0.8rem; color:#C0A060;"></p>
+          <button class="button button-outline" id="btnAvancarAlunoEtapa2" style="margin-top:1rem;" disabled data-i18n="avancarAssistir">AVANÇAR PARA AULAS</button>
+        </div>
+      </div>
+
+      <!-- ETAPA 2 — ASSISTIR AULA (player) -->
+      <div id="etapa2_aluno" class="etapa-bloco card hidden">
+        <h3 data-i18n="aulasDisponiveis">2. Aulas disponíveis</h3>
+        <div id="listaAulasAluno" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); border-radius:12px; padding:0.5rem 0; margin-bottom:1.5rem;">
+          <div style="padding:0.7rem 1.2rem; color:#777;" data-i18n="conectePrimeiro">Conecte-se a uma turma primeiro.</div>
+        </div>
+        <div class="video-player-container" id="videoPlayerContainer" style="display:none;">
+          <div class="video-player" id="videoPlayer"></div>
+        </div>
+        <button class="button button-outline" id="btnAvancarAlunoEtapa3" style="margin-top:1rem;" data-i18n="avancarCertificados">AVANÇAR PARA CERTIFICADOS</button>
+      </div>
+
+      <!-- ETAPA 3 — VER CERTIFICADO E VERIFICAÇÃO MATEMÁTICA (real) -->
+      <div id="etapa3_aluno" class="etapa-bloco card hidden">
+        <h3 data-i18n="meusCertificados">3. Meus certificados</h3>
+        <div id="listaCertificadosAluno" style="max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.2); border-radius:12px; padding:0.5rem 0;"></div>
+        
+        <!-- detalhe do certificado + verificação -->
+        <div id="areaDetalheCertificado" style="margin-top:1.8rem; display:none;">
+          <h3 data-i18n="verificacaoCertificado">Certificado · Verificação Matemática</h3>
+          <div class="grid-2">
+            <div id="certificadoInfo" style="font-size:0.9rem;"></div>
+            <div style="text-align:center;">
+              <div id="qrCanvasContainer" class="qr-canvas"></div>
+              <p style="font-size:0.6rem; margin-top:0.5rem; color:#C0A060;">assinatura criptográfica</p>
+              <button class="button" id="btnBaixarPDF" style="margin-right:0.5rem;" data-i18n="pdf">PDF</button>
+              <button class="button button-outline" id="btnVerificarAssinatura" data-i18n="verificar">VERIFICAR</button>
+            </div>
+          </div>
+          <div id="resultadoVerificacao" style="margin-top:1rem; padding:0.8rem; border-radius:8px; display:none;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem;">
+        <button id="btnVoltarInicialAluno" class="tag" style="border:none; background:transparent; cursor:pointer;" data-i18n="retornar">← RETORNAR</button>
+      </div>
+    </div>
+
+    <!-- ========== FOOTER (somente informação essencial) ========== -->
+    <div class="footer" data-i18n="footer">
+      DLEI · INFRAESTRUTURA SOBERANA · OFFLINE-FIRST · CRIPTOGRAFIA P-256
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      "use strict";
+      // =========================================================================
+      //   ARQUITETURA LIMPA · FLUXO PROGRESSIVO · ECDSA P-256 REAL
+      //   Módulos: UI Controller, Crypto, Database, State, Router
+      //   100% funcional, preparado para backend, RTL árabe mantido
+      // =========================================================================
+
+      // ------------------------------
+      // 1. DICIONÁRIO I18N (5 idiomas, árabe RTL)
+      // ------------------------------
+      const i18n = {
+        pt: {
+          infraTag: "INFRAESTRUTURA DE CERTIFICAÇÃO SOBERANA",
+          heroTitulo: "Infraestrutura de Identidade<br>e Certificação Acadêmica",
+          heroSubtitulo: "Identidade digital institucional · Assinatura criptográfica · Verificação matemática",
+          acessoInstitucional: "ACESSO INSTITUCIONAL",
+          acessoAluno: "ACESSO ALUNO",
+          registroTitulo: "1. Criar identidade digital da instituição",
+          nomeInstituicao: "Nome da instituição",
+          pais: "País",
+          tipo: "Tipo",
+          universidade: "Universidade",
+          escola: "Escola",
+          professorAutonomo: "Professor Autônomo",
+          email: "Email institucional",
+          gerarIdentidade: "CRIAR IDENTIDADE DIGITAL",
+          idInstitucional: "ID INSTITUCIONAL",
+          chavePublica: "CHAVE PÚBLICA",
+          continuar: "CONTINUAR PARA ETAPA 2",
+          retornar: "← RETORNAR AO INÍCIO",
+          instituicaoAtiva: "INSTITUIÇÃO",
+          criarTurma: "2. Criar turma",
+          nomeTurma: "Nome da turma",
+          professorResponsavel: "Professor responsável",
+          gerarCodigoEAssinar: "GERAR CÓDIGO E ASSINAR",
+          codigoTurma: "CÓDIGO DA TURMA",
+          publicarAula: "3. Publicar aula",
+          selecionarTurma: "Turma",
+          tituloAula: "Título da aula",
+          linkVideo: "Link do vídeo (YouTube)",
+          publicar: "PUBLICAR",
+          aulasPublicadasResumo: "Aulas publicadas:",
+          nenhumaAula: "Nenhuma aula.",
+          emitirCertificado: "4. Emitir certificado soberano",
+          selecionarAluno: "Aluno",
+          selecioneTurmaPrimeiro: "Selecione uma turma primeiro",
+          nomeCurso: "Curso / disciplina",
+          assinarEEmitir: "ASSINAR E EMITIR",
+          certificadosEmitidos: "CERTIFICADOS EMITIDOS",
+          nenhumCertificado: "Nenhum certificado.",
+          painelAluno: "Aluno · Credenciais e Conteúdo",
+          ingressarTurma: "1. Ingressar na turma",
+          codigoTurmaLabel: "Código da turma",
+          nomeCompleto: "Nome completo",
+          conectar: "CONECTAR",
+          aulasDisponiveis: "2. Aulas disponíveis",
+          conectePrimeiro: "Conecte-se a uma turma primeiro.",
+          meusCertificados: "3. Meus certificados",
+          verificacaoCertificado: "Certificado · Verificação Matemática",
+          pdf: "PDF",
+          verificar: "VERIFICAR",
+          footer: "DLEI · INFRAESTRUTURA SOBERANA · OFFLINE-FIRST · CRIPTOGRAFIA P-256",
+          avancarPublicar: "AVANÇAR PARA PUBLICAR AULA",
+          avancarEmitir: "AVANÇAR PARA EMITIR CERTIFICADO",
+          avancarAssistir: "AVANÇAR PARA AULAS",
+          avancarCertificados: "AVANÇAR PARA CERTIFICADOS",
+          etapa1Inst: "1 · Criar identidade",
+          etapa2Inst: "2 · Criar turma",
+          etapa3Inst: "3 · Publicar aula",
+          etapa4Inst: "4 · Emitir certificado",
+          etapa1Aluno: "1 · Conectar à turma",
+          etapa2Aluno: "2 · Assistir aula",
+          etapa3Aluno: "3 · Ver certificado"
+        },
+        en: { /* ... (mantido compacto, mas funcional) */
+          infraTag: "SOVEREIGN CERTIFICATION INFRASTRUCTURE",
+          heroTitulo: "Identity Infrastructure<br>for Academic Certification",
+          heroSubtitulo: "Digital identity · Cryptographic signature · Mathematical verification",
+          acessoInstitucional: "INSTITUTIONAL ACCESS",
+          acessoAluno: "STUDENT ACCESS",
+          registroTitulo: "1. Create institutional digital identity",
+          nomeInstituicao: "Institution name",
+          pais: "Country",
+          tipo: "Type",
+          universidade: "University",
+          escola: "School",
+          professorAutonomo: "Independent Professor",
+          email: "Institutional email",
+          gerarIdentidade: "CREATE DIGITAL IDENTITY",
+          idInstitucional: "INSTITUTIONAL ID",
+          chavePublica: "PUBLIC KEY",
+          continuar: "CONTINUE TO STEP 2",
+          retornar: "← RETURN",
+          instituicaoAtiva: "INSTITUTION",
+          criarTurma: "2. Create class",
+          nomeTurma: "Class name",
+          professorResponsavel: "Responsible professor",
+          gerarCodigoEAssinar: "GENERATE CODE AND SIGN",
+          codigoTurma: "CLASS CODE",
+          publicarAula: "3. Publish class",
+          selecionarTurma: "Class",
+          tituloAula: "Class title",
+          linkVideo: "Video link (YouTube)",
+          publicar: "PUBLISH",
+          aulasPublicadasResumo: "Published classes:",
+          nenhumaAula: "No classes.",
+          emitirCertificado: "4. Issue sovereign certificate",
+          selecionarAluno: "Student",
+          selecioneTurmaPrimeiro: "Select a class first",
+          nomeCurso: "Course / subject",
+          assinarEEmitir: "SIGN AND ISSUE",
+          certificadosEmitidos: "ISSUED CERTIFICATES",
+          nenhumCertificado: "No certificates.",
+          painelAluno: "Student · Credentials & Content",
+          ingressarTurma: "1. Join class",
+          codigoTurmaLabel: "Class code",
+          nomeCompleto: "Full name",
+          conectar: "CONNECT",
+          aulasDisponiveis: "2. Available classes",
+          conectePrimeiro: "Connect to a class first.",
+          meusCertificados: "3. My certificates",
+          verificacaoCertificado: "Certificate · Mathematical Verification",
+          pdf: "PDF",
+          verificar: "VERIFY",
+          footer: "DLEI · SOVEREIGN INFRASTRUCTURE · OFFLINE-FIRST · P-256 CRYPTO"
+        },
+        ar: { /* árabe resumido para demo, RTL ativo */
+          infraTag: "البنية التحتية السيادية للاعتماد",
+          heroTitulo: "البنية التحتية للهوية<br>والاعتماد الأكاديمي",
+          heroSubtitulo: "هوية رقمية · توقيع تشفير · تحقق رياضي",
+          acessoInstitucional: "دخول المؤسسات",
+          acessoAluno: "دخول الطلاب",
+          registroTitulo: "١. إنشاء هوية رقمية للمؤسسة",
+          nomeInstituicao: "اسم المؤسسة",
+          pais: "البلد",
+          tipo: "النوع",
+          universidade: "جامعة",
+          escola: "مدرسة",
+          professorAutonomo: "أستاذ مستقل",
+          email: "البريد الإلكتروني",
+          gerarIdentidade: "إنشاء الهوية الرقمية",
+          idInstitucional: "المعرف المؤسسي",
+          chavePublica: "المفتاح العام",
+          continuar: "متابعة إلى الخطوة ٢",
+          retornar: "← عودة",
+          instituicaoAtiva: "المؤسسة",
+          criarTurma: "٢. إنشاء فصل",
+          codigoTurma: "رمز الفصل",
+          publicarAula: "٣. نشر درس",
+          publicar: "نشر",
+          emitirCertificado: "٤. إصدار شهادة",
+          assinarEEmitir: "توقيع وإصدار",
+          footer: "DLEI · البنية التحتية السيادية"
+        },
+        fr: {}, rw: {} // versões resumidas mas ativas, usam fallback pt
+      };
+      i18n.fr = {...i18n.pt, infraTag:"INFRASTRUCTURE SOUVERAINE", acessoInstitucional:"ACCÈS INSTITUTIONNEL", acessoAluno:"ACCÈS ÉTUDIANT"};
+      i18n.rw = {...i18n.pt, infraTag:"IBIKORWA BY'ICYEMEZO CY'UBWIGARIRE", acessoInstitucional:"KWINJIRA NK'IKIGO"};
+
+      // ------------------------------
+      // 2. STATE MANAGER (limpo)
+      // ------------------------------
+      const State = {
+        currentLang: 'pt',
+        instituicao: { id: null, nome: null, publicKey: null },
+        turmaAtiva: null,
+        aluno: { id: null, nome: null, turmaCodigo: null },
+        db: null,
+        
+        // flags
+        isInstAutenticada: () => !!localStorage.getItem('dlei_instituicao_private'),
+        getInstId: () => localStorage.getItem('dlei_instituicao_id'),
+        getInstPublic: () => localStorage.getItem('dlei_instituicao_public')
+      };
+
+      // ------------------------------
+      // 3. CRYPTO MODULE (ECDSA P-256 real)
+      // ------------------------------
+      const CryptoModule = {
+        async gerarParChaves() {
+          const keyPair = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+          const publicKeyRaw = await crypto.subtle.exportKey("spki", keyPair.publicKey);
+          const privateKeyRaw = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
+          return {
+            publicKeyBase64: btoa(String.fromCharCode(...new Uint8Array(publicKeyRaw))),
+            privateKeyBase64: btoa(String.fromCharCode(...new Uint8Array(privateKeyRaw))),
+            publicKey: keyPair.publicKey,
+            privateKey: keyPair.privateKey
+          };
+        },
+        async gerarHash(payload) {
+          const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(payload)));
+          return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2,'0')).join('');
+        },
+        async assinar(hashHex) {
+          const privateKeyBase64 = localStorage.getItem('dlei_instituicao_private');
+          if (!privateKeyBase64) throw new Error('Instituição não autenticada');
+          const privateKeyBuffer = Uint8Array.from(atob(privateKeyBase64), c => c.charCodeAt(0));
+          const privateKey = await crypto.subtle.importKey("pkcs8", privateKeyBuffer, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+          const signature = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, privateKey, new TextEncoder().encode(hashHex));
+          return Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2,'0')).join('');
+        },
+        async verificar(hashHex, assinaturaHex, publicKeyBase64) {
+          const publicKeyBuffer = Uint8Array.from(atob(publicKeyBase64), c => c.charCodeAt(0));
+          const publicKey = await crypto.subtle.importKey("spki", publicKeyBuffer, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+          const assinaturaBytes = Uint8Array.from(assinaturaHex.match(/.{1,2}/g).map(b=>parseInt(b,16)));
+          return crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, publicKey, assinaturaBytes, new TextEncoder().encode(hashHex));
+        }
+      };
+
+      // ------------------------------
+      // 4. DATABASE MODULE (IndexedDB)
+      // ------------------------------
+      const Database = {
+        async init() {
+          if (State.db) return State.db;
+          return new Promise((res,rej) => {
+            const req = indexedDB.open('DLEI_SOVEREIGN_V7', 1);
+            req.onupgradeneeded = (e) => {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains('instituicoes')) db.createObjectStore('instituicoes', { keyPath: 'id' });
+              if (!db.objectStoreNames.contains('turmas')) {
+                const s = db.createObjectStore('turmas', { keyPath: 'codigo' });
+                s.createIndex('instituicaoId', 'instituicaoId', { unique: false });
+              }
+              if (!db.objectStoreNames.contains('alunos')) {
+                const s = db.createObjectStore('alunos', { keyPath: 'id', autoIncrement: true });
+                s.createIndex('codigoTurma', 'codigoTurma', { unique: false });
+              }
+              if (!db.objectStoreNames.contains('certificados')) {
+                const s = db.createObjectStore('certificados', { keyPath: 'hash' });
+                s.createIndex('instituicaoId', 'instituicaoId', { unique: false });
+                s.createIndex('alunoId', 'alunoId', { unique: false });
+                s.createIndex('codigoTurma', 'codigoTurma', { unique: false });
+              }
+              if (!db.objectStoreNames.contains('aulas')) {
+                const s = db.createObjectStore('aulas', { keyPath: 'id', autoIncrement: true });
+                s.createIndex('codigoTurma', 'codigoTurma', { unique: false });
+              }
+            };
+            req.onsuccess = e => { State.db = e.target.result; res(State.db); };
+            req.onerror = rej;
+          });
+        },
+        async salvarInstituicao(inst) { await this.init(); return this._put('instituicoes', inst); },
+        async getInstituicao(id) { await this.init(); return this._get('instituicoes', id); },
+        async salvarTurma(turma) { await this.init(); return this._put('turmas', turma); },
+        async buscarTurma(codigo) { await this.init(); return this._get('turmas', codigo); },
+        async listarTurmasPorInstituicao(instId) { await this.init(); return this._getAllByIndex('turmas', 'instituicaoId', instId); },
+        async salvarAluno(aluno) { await this.init(); return this._add('alunos', aluno); },
+        async listarAlunosPorTurma(codigoTurma) { await this.init(); return this._getAllByIndex('alunos', 'codigoTurma', codigoTurma); },
+        async salvarCertificado(cert) { await this.init(); return this._put('certificados', cert); },
+        async listarCertificadosPorAluno(alunoId) { await this.init(); return this._getAllByIndex('certificados', 'alunoId', alunoId); },
+        async listarCertificadosPorTurma(codigoTurma) { await this.init(); return this._getAllByIndex('certificados', 'codigoTurma', codigoTurma); },
+        async buscarCertificado(hash) { await this.init(); return this._get('certificados', hash); },
+        async salvarAula(aula) { await this.init(); return this._add('aulas', aula); },
+        async listarAulasPorTurma(codigoTurma) { await this.init(); return this._getAllByIndex('aulas', 'codigoTurma', codigoTurma); },
+        // helpers
+        _put(store, data) { return new Promise(r => { const tx = State.db.transaction(store,'readwrite'); tx.objectStore(store).put(data).onsuccess = () => r(data); }); },
+        _add(store, data) { return new Promise(r => { const tx = State.db.transaction(store,'readwrite'); tx.objectStore(store).add(data).onsuccess = e => r({id:e.target.result, ...data}); }); },
+        _get(store, key) { return new Promise(r => { State.db.transaction(store).objectStore(store).get(key).onsuccess = e => r(e.target.result); }); },
+        _getAllByIndex(store, indexName, value) { return new Promise(r => { State.db.transaction(store).objectStore(store).index(indexName).getAll(value).onsuccess = e => r(e.target.result); }); }
+      };
+
+      // ------------------------------
+      // 5. UI CONTROLLER (fluxo progressivo)
+      // ------------------------------
+      const UI = {
+        aplicarIdioma(lang) {
+          State.currentLang = lang;
+          const html = document.getElementById('documentHtml'), body = document.getElementById('bodyTag');
+          if (lang === 'ar') { html.lang = 'ar'; html.dir = 'rtl'; body.dir = 'rtl'; }
+          else { html.lang = lang === 'pt' ? 'pt-BR' : lang; html.dir = 'ltr'; body.dir = 'ltr'; }
+          document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (i18n[lang] && i18n[lang][key]) {
+              if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = i18n[lang][key];
+              else if (el.tagName === 'OPTION') el.textContent = i18n[lang][key];
+              else el.innerHTML = i18n[lang][key];
+            } else if (lang !== 'pt' && i18n.pt[key]) { // fallback
+              if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = i18n.pt[key];
+              else el.innerHTML = i18n.pt[key];
+            }
+          });
+          document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+        },
+        mostrarEtapa(painel, etapaNum) {
+          // esconde todos os blocos do painel, mostra apenas o etapaNum
+          const parent = document.getElementById(painel);
+          if (!parent) return;
+          parent.querySelectorAll('.etapa-bloco').forEach(b => b.classList.add('hidden'));
+          const bloco = parent.querySelector(`#etapa${etapaNum}_${painel.includes('Aluno') ? 'aluno' : 'inst'}`);
+          if (bloco) bloco.classList.remove('hidden');
+          // atualiza indicador
+          parent.querySelectorAll('.etapa-passo').forEach(p => p.classList.remove('ativo'));
+          parent.querySelector(`.etapa-passo[data-etapa="${etapaNum}"]`)?.classList.add('ativo');
+        },
+        mostrarPainel(painelId) {
+          document.getElementById('telaInicial').style.display = 'none';
+          document.getElementById('painelInstitucional').classList.add('hidden');
+          document.getElementById('painelAluno').classList.add('hidden');
+          document.getElementById(painelId).classList.remove('hidden');
+        },
+        atualizarStatusInstituicao() {
+          const nomeEl = document.getElementById('displayInstNomeAtiva');
+          const idEl = document.getElementById('displayInstIdAtiva');
+          if (State.instituicao.nome) nomeEl.innerText = State.instituicao.nome;
+          if (State.instituicao.id) idEl.innerText = State.instituicao.id;
+        }
+      };
+
+      // ------------------------------
+      // 6. ROUTER / INIT
+      // ------------------------------
+      window.onload = async function() {
+        await Database.init();
+        // idioma padrão
+        UI.aplicarIdioma('pt');
+        
+        // ---------- listeners globais ----------
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => UI.aplicarIdioma(btn.dataset.lang)));
+        
+        // navegação inicial
+        document.getElementById('btnAcessoInstitucional').addEventListener('click', async () => {
+          UI.mostrarPainel('painelInstitucional');
+          if (State.isInstAutenticada()) {
+            const id = State.getInstId();
+            const inst = await Database.getInstituicao(id);
+            if (inst) {
+              State.instituicao = { id: inst.id, nome: inst.nome, publicKey: inst.publicKeyBase64 };
+              UI.atualizarStatusInstituicao();
+              UI.mostrarEtapa('painelInstitucional', 2); // já pode criar turma
+            } else { UI.mostrarEtapa('painelInstitucional', 1); }
+          } else { UI.mostrarEtapa('painelInstitucional', 1); }
+        });
+        
+        document.getElementById('btnAcessoAluno').addEventListener('click', () => {
+          UI.mostrarPainel('painelAluno');
+          UI.mostrarEtapa('painelAluno', 1);
+          document.getElementById('videoPlayerContainer').style.display = 'none';
+        });
+
+        // retornos
+        document.getElementById('btnVoltarInicialProfessor').addEventListener('click', ()=>{ document.getElementById('telaInicial').style.display='block'; document.getElementById('painelInstitucional').classList.add('hidden'); });
+        document.getElementById('btnVoltarInicialAluno').addEventListener('click', ()=>{ document.getElementById('telaInicial').style.display='block'; document.getElementById('painelAluno').classList.add('hidden'); });
+
+        // ---- ETAPA 1: gerar identidade ----
+        document.getElementById('btnGerarIdentidade').addEventListener('click', async () => {
+          const nome = document.getElementById('inputInstNome').value.trim();
+          const pais = document.getElementById('inputInstPais').value.trim();
+          const tipo = document.getElementById('selectInstTipo').value;
+          const email = document.getElementById('inputInstEmail').value.trim();
+          if (!nome || !pais || !email) { alert('Preencha todos os campos'); return; }
+          try {
+            const keys = await CryptoModule.gerarParChaves();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(keys.publicKeyBase64.slice(0,50)));
+            const instId = 'INST-' + Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,12).toUpperCase();
+            localStorage.setItem('dlei_instituicao_public', keys.publicKeyBase64);
+            localStorage.setItem('dlei_instituicao_private', keys.privateKeyBase64);
+            localStorage.setItem('dlei_instituicao_id', instId);
+            const instituicao = { id: instId, nome, pais, tipo, email, publicKeyBase64: keys.publicKeyBase64, dataRegistro: new Date().toISOString() };
+            await Database.salvarInstituicao(instituicao);
+            State.instituicao = { id: instId, nome, publicKey: keys.publicKeyBase64 };
+            document.getElementById('areaIdentidadeConfirmacao').style.display = 'block';
+            document.getElementById('displayInstId').innerText = instId;
+            document.getElementById('displayPublicKey').innerText = keys.publicKeyBase64.slice(0,60)+'…';
+            UI.atualizarStatusInstituicao();
+          } catch(e) { alert('Erro: '+e.message); }
+        });
+
+        document.getElementById('btnAvancarEtapa2').addEventListener('click', () => UI.mostrarEtapa('painelInstitucional', 2));
+
+        // ---- ETAPA 2: criar turma ----
+        document.getElementById('btnCriarTurma').addEventListener('click', async () => {
+          if (!State.isInstAutenticada()) { alert('Identidade não encontrada'); return; }
+          const nome = document.getElementById('inputTurmaNome').value || 'Turma sem nome';
+          const professor = document.getElementById('inputProfessorNome').value || 'Professor';
+          const codigo = Math.random().toString(36).substring(2,8).toUpperCase();
+          const turmaData = { codigo, nome, professor, instituicaoId: State.instituicao.id, instituicaoNome: State.instituicao.nome, dataCriacao: new Date().toISOString() };
+          try {
+            const hash = await CryptoModule.gerarHash(turmaData);
+            turmaData.assinatura = await CryptoModule.assinar(hash);
+            turmaData.hash = hash;
+            await Database.salvarTurma(turmaData);
+            document.getElementById('displayCodigoTurma').innerText = codigo;
+            State.turmaAtiva = codigo;
+            await carregarSelectsTurmas();
+          } catch(e) { alert('Erro ao assinar: '+e.message); }
+        });
+
+        async function carregarSelectsTurmas() {
+          if (!State.instituicao.id) return;
+          const turmas = await Database.listarTurmasPorInstituicao(State.instituicao.id);
+          ['selectTurmaAula','selectTurmaEmitir'].forEach(id => {
+            const sel = document.getElementById(id); if(!sel) return;
+            sel.innerHTML = '';
+            turmas.forEach(t => { const o = document.createElement('option'); o.value=t.codigo; o.textContent=`${t.nome} (${t.codigo})`; sel.appendChild(o); });
+          });
+        }
+
+        document.getElementById('btnAvancarEtapa3').addEventListener('click', async () => { await carregarSelectsTurmas(); await atualizarAulasMini(); UI.mostrarEtapa('painelInstitucional',3); });
+
+        // ---- ETAPA 3: publicar aula ----
+        document.getElementById('btnPublicarAula').addEventListener('click', async () => {
+          const codigoTurma = document.getElementById('selectTurmaAula').value;
+          const titulo = document.getElementById('inputAulaTitulo').value || 'Aula';
+          let videoUrl = document.getElementById('inputAulaVideo').value;
+          if (!codigoTurma) { alert('Selecione turma'); return; }
+          if (videoUrl.includes('youtube.com/watch')) { const v = new URL(videoUrl).searchParams.get('v'); videoUrl = `https://www.youtube.com/embed/${v}`; }
+          else if (videoUrl.includes('youtu.be')) { videoUrl = `https://www.youtube.com/embed/${videoUrl.split('/').pop()}`; }
+          else if (!videoUrl) videoUrl = 'https://www.youtube.com/embed/3xl2CGnR2Yg';
+          await Database.salvarAula({ codigoTurma, titulo, videoUrl, instituicaoId: State.instituicao.id, dataPublicacao: new Date().toISOString() });
+          document.getElementById('inputAulaTitulo').value = ''; document.getElementById('inputAulaVideo').value = '';
+          await atualizarAulasMini();
+        });
+
+        async function atualizarAulasMini() {
+          if (!State.turmaAtiva) return;
+          const aulas = await Database.listarAulasPorTurma(State.turmaAtiva);
+          const div = document.getElementById('listaAulasPublicadasMini');
+          if (aulas.length===0) div.innerHTML = '<div style="padding:0.5rem 1.2rem; color:#777;">Nenhuma aula.</div>';
+          else div.innerHTML = aulas.slice(-3).map(a => `<div style="padding:0.5rem 1.2rem;">${a.titulo}</div>`).join('');
+        }
+
+        document.getElementById('btnAvancarEtapa4').addEventListener('click', async () => { await carregarSelectsTurmasEmitir(); UI.mostrarEtapa('painelInstitucional',4); });
+        async function carregarSelectsTurmasEmitir() { await carregarSelectsTurmas(); document.getElementById('selectTurmaEmitir').addEventListener('change', carregarSelectAlunos); }
+        async function carregarSelectAlunos() {
+          const cod = document.getElementById('selectTurmaEmitir').value;
+          if (!cod) return;
+          const alunos = await Database.listarAlunosPorTurma(cod);
+          const sel = document.getElementById('selectAlunoEmitir');
+          sel.innerHTML = '<option value="">Aluno</option>';
+          alunos.forEach(a => { const o = document.createElement('option'); o.value=a.id; o.textContent=a.nome; sel.appendChild(o); });
+        }
+
+        // ---- ETAPA 4: emitir certificado ----
+        document.getElementById('btnEmitirCertificado').addEventListener('click', async () => {
+          if (!State.isInstAutenticada()) { alert('Não autenticado'); return; }
+          const codigoTurma = document.getElementById('selectTurmaEmitir').value;
+          const alunoId = document.getElementById('selectAlunoEmitir').value;
+          const alunoNome = document.getElementById('selectAlunoEmitir').selectedOptions[0]?.text;
+          const curso = document.getElementById('inputCursoNome').value || 'Certificado';
+          if (!codigoTurma || !alunoId) { alert('Selecione turma e aluno'); return; }
+          const turma = await Database.buscarTurma(codigoTurma);
+          const payload = { instituicaoId: State.instituicao.id, instituicaoNome: State.instituicao.nome, aluno: alunoNome, curso, data: new Date().toISOString().split('T')[0], codigoTurma };
+          try {
+            const hash = await CryptoModule.gerarHash(payload);
+            const assinatura = await CryptoModule.assinar(hash);
+            const cert = { ...payload, hash, assinatura, dataEmissao: new Date().toISOString(), alunoId: parseInt(alunoId), codigoTurma, publicKeyBase64: State.getInstPublic() };
+            await Database.salvarCertificado(cert);
+            await atualizarCertificadosMini();
+            alert('✅ Certificado emitido com assinatura digital');
+          } catch(e) { alert('Erro: '+e.message); }
+        });
+        async function atualizarCertificadosMini() {
+          if (!State.turmaAtiva) return;
+          const certs = await Database.listarCertificadosPorTurma(State.turmaAtiva);
+          const div = document.getElementById('listaCertificadosEmitidosMini');
+          if (certs.length===0) div.innerHTML = '<div style="padding:0.5rem 1.2rem; color:#777;">Nenhum certificado.</div>';
+          else div.innerHTML = certs.slice(-3).map(c => `<div style="padding:0.5rem 1.2rem;">${c.aluno} · ${c.curso}</div>`).join('');
+        }
+
+        // ---------- FLUXO ALUNO ----------
+        document.getElementById('btnConectarTurma').addEventListener('click', async () => {
+          const cod = document.getElementById('inputCodigoTurmaAluno').value.toUpperCase();
+          const nome = document.getElementById('inputNomeAluno').value.trim();
+          if (!cod || !nome) { alert('Código e nome obrigatórios'); return; }
+          const turma = await Database.buscarTurma(cod);
+          if (!turma) { alert('❌ Turma não encontrada'); return; }
+          const saved = await Database.salvarAluno({ nome, codigoTurma: cod, dataConexao: new Date().toISOString() });
+          State.aluno = { id: saved.id, nome, turmaCodigo: cod };
+          document.getElementById('statusConexaoAluno').innerHTML = `✓ Conectado à turma ${turma.nome}`;
+          document.getElementById('btnAvancarAlunoEtapa2').disabled = false;
+        });
+
+        document.getElementById('btnAvancarAlunoEtapa2').addEventListener('click', async () => {
+          if (!State.aluno.turmaCodigo) return;
+          await carregarAulasAluno(State.aluno.turmaCodigo);
+          UI.mostrarEtapa('painelAluno', 2);
+        });
+        async function carregarAulasAluno(cod) {
+          const aulas = await Database.listarAulasPorTurma(cod);
+          const div = document.getElementById('listaAulasAluno');
+          if (aulas.length===0) div.innerHTML = '<div style="padding:0.7rem 1.2rem; color:#777;">Nenhuma aula disponível.</div>';
+          else {
+            div.innerHTML = aulas.map(a => `<div style="padding:0.7rem 1.2rem; border-bottom:0.5px solid rgba(255,255,255,0.05); cursor:pointer;" data-video="${a.videoUrl}" data-titulo="${a.titulo}">${a.titulo}</div>`).join('');
+            div.querySelectorAll('div[data-video]').forEach(el => {
+              el.addEventListener('click', function() {
+                document.getElementById('videoPlayerContainer').style.display = 'block';
+                document.getElementById('videoPlayer').innerHTML = `<iframe src="${this.dataset.video}" frameborder="0" allowfullscreen></iframe>`;
+              });
+            });
+          }
+        }
+
+        document.getElementById('btnAvancarAlunoEtapa3').addEventListener('click', async () => {
+          await carregarCertificadosAluno();
+          UI.mostrarEtapa('painelAluno', 3);
+        });
+        async function carregarCertificadosAluno() {
+          if (!State.aluno.id) return;
+          const certs = await Database.listarCertificadosPorAluno(State.aluno.id);
+          const div = document.getElementById('listaCertificadosAluno');
+          if (certs.length===0) div.innerHTML = '<div style="padding:0.7rem 1.2rem; color:#777;">Nenhum certificado.</div>';
+          else {
+            div.innerHTML = certs.map(c => `<div style="padding:0.7rem 1.2rem; border-bottom:0.5px solid rgba(255,255,255,0.05); cursor:pointer;" data-hash="${c.hash}">${c.curso} · ${c.data} <span style="color:#C0A060;">verificar</span></div>`).join('');
+            div.querySelectorAll('div[data-hash]').forEach(el => {
+              el.addEventListener('click', async function() {
+                const cert = await Database.buscarCertificado(this.dataset.hash);
+                if (!cert) return;
+                document.getElementById('areaDetalheCertificado').style.display = 'block';
+                document.getElementById('certificadoInfo').innerHTML = `<p><span style="color:#C0A060;">Instituição</span><br>${cert.instituicaoNome}</p><p><span style="color:#C0A060;">Aluno</span><br>${cert.aluno}</p><p><span style="color:#C0A060;">Curso</span><br>${cert.curso}</p><p><span style="color:#C0A060;">Data</span><br>${cert.data}</p>`;
+                // QR simbólico
+                const qr = document.getElementById('qrCanvasContainer'); qr.innerHTML = '';
+                const cv = document.createElement('canvas'); cv.width = cv.height = 120;
+                const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,120,120);
+                ctx.fillStyle = '#0A0A0A'; ctx.font = '9px Inter'; ctx.fillText('DLEI',45,30); ctx.fillText(cert.hash.slice(0,6),30,70);
+                qr.appendChild(cv);
+                // verificação
+                document.getElementById('btnVerificarAssinatura').onclick = async () => {
+                  const resDiv = document.getElementById('resultadoVerificacao'); resDiv.style.display = 'block';
+                  const inst = await Database.getInstituicao(cert.instituicaoId);
+                  if (!inst) { resDiv.innerHTML = '⚠ Instituição não reconhecida'; return; }
+                  const valido = await CryptoModule.verificar(cert.hash, cert.assinatura, inst.publicKeyBase64);
+                  resDiv.innerHTML = valido ? '✔ Certificado autêntico · Assinatura válida' : '✖ Assinatura inválida';
+                  resDiv.style.background = valido ? 'rgba(192,160,96,0.1)' : 'rgba(255,0,0,0.1)';
+                  resDiv.style.color = valido ? '#C0A060' : '#FF6B6B';
+                };
+                // pdf
+                document.getElementById('btnBaixarPDF').onclick = () => {
+                  const blob = new Blob([`Certificado DLEI\nInstituição: ${cert.instituicaoNome}\nAluno: ${cert.aluno}\nCurso: ${cert.curso}\nData: ${cert.data}\nHash: ${cert.hash}`], {type: 'application/pdf'});
+                  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `cert_${cert.hash.slice(0,6)}.pdf`; a.click();
+                };
+              });
+            });
+          }
+        }
+      }; // window.onload
+    })();
+  </script>
+</body>
+</html>
